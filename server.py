@@ -1,34 +1,33 @@
-import websockets
 import asyncio
+import websockets
 import random
 
-# Creating WebSocket server
-async def ws_server(websocket):
-    print("WebSocket: Server Started.")
+# Storing connected clients
+connected = set()
 
+async def chat(websocket, path):
+    # Register client
+    connected.add(websocket)
     try:
-        while True:
-            # Receiving values from client
-            name = await websocket.recv()
+        async for message in websocket:
+            print(message)
+            # Broadcast message to all connected clients
+            for client in connected:
+                no = random.randint(0,10)
+                no = str(no)
+                if client != websocket:
+                    await client.send(message)
+                    await client.send(no)
 
-            # Prompt message when any of the field is missing
-            if name == "":
-                print("Error Receiving Value from Client.")
-                break
 
-            # Printing details received by client
-            print("Details Received from Client:")
+    finally:
+        # Remove client when they disconnect
+        connected.remove(websocket)
 
-            # Sending a response back to the client
-            response = random.randint(1, 10)
-            print(f"Hello {name} your luck number is ", response)
-            await websocket.send(str(response))
-
-    except websockets.ConnectionClosedError:
-        print("Internal Server Error.")
+# start_server = websockets.serve(chat, "localhost", 8765)
 
 async def main():
-    async with websockets.serve(ws_server, "localhost", 8000):
+    async with websockets.serve(chat, "localhost", 8765):
         await asyncio.Future()  # run forever
 
 if __name__ == "__main__":

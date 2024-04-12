@@ -13,11 +13,10 @@ async def chat(websocket, path):
             print(message)
             # Broadcast message to all connected clients
             for client in connected:
-                no = random.randint(0,10)
-                no = str(no)
+                
                 if client != websocket:
                     await client.send(message)
-                    await client.send(no)
+                    
 
 
     finally:

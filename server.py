@@ -14,13 +14,9 @@ async def chat(websocket, path):
     # Register client
     connected.add(websocket)
     print('new client connected')
-    # Assign a unique id to new websocket connection
-    for client in connected:
-                if client == websocket:
-                    username = getUsername(userAndWsClientDict)
-                    userAndWsClientDict.append({websocket:username})
-                    await client.send(username)
-                    print(userAndWsClientDict)
+    username = getUsername(userAndWsClientDict)
+    userAndWsClientDict.append({websocket:username})
+    await websocket.send(username)
 
     try:
         async for message in websocket:
@@ -42,9 +38,6 @@ async def chat(websocket, path):
                 if key == websocket:
                     userAndWsClientDict.remove(userAndWsClient)
                     print('Client ' + value + ' removed')
-                
-
-# start_server = websockets.serve(chat, "localhost", 8765)
 
 async def main():
     async with websockets.serve(chat, "localhost", 8765):
@@ -52,6 +45,4 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-
-# object by value and object by reference
-
+    

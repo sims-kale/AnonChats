@@ -13,19 +13,23 @@ userAndWsClientDict = []
 async def chat(websocket, path):
     # Register client
     connected.add(websocket)
-    print('new client connected')
     username = getUsername(userAndWsClientDict)
+    print(username + ' joined')
     userAndWsClientDict.append({websocket:username})
     await websocket.send(username)
+    
+    # Notify other users that new user has joined
+    for client in connected: 
+                if client != websocket:
+                    await client.send(username+' joined')
 
     try:
         async for message in websocket:
             print(message)
             # Broadcast message to all connected clients
             for client in connected:
-                
                 if client != websocket:
-                    await client.send(message)
+                    await client.send(username+'!'+message)
                     
     except websockets.exceptions.ConnectionClosedError as cce:
         print('Connection closed')
@@ -37,7 +41,11 @@ async def chat(websocket, path):
             for key, value in userAndWsClient.items():
                 if key == websocket:
                     userAndWsClientDict.remove(userAndWsClient)
-                    print('Client ' + value + ' removed')
+                    print(value + ' left')
+                    # Notify other users that new user has joined
+                    for client in connected: 
+                        if client != websocket:
+                            await client.send(username+' left')
 
 async def main():
     async with websockets.serve(chat, "localhost", 8765):

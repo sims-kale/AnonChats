@@ -1,27 +1,31 @@
 import asyncio
 import websockets
-import random
-import string
-from util.nameshelper import getUsername
+import json
+from util import msg_types, nameshelper
 
 # Store connected clients
 connected = set()
-names= set()
+names = set()
 userAndWsClientDict = []
 
 
 async def chat(websocket, path):
     # Register client
     connected.add(websocket)
-    username = getUsername(userAndWsClientDict)
+    username = nameshelper.getUsername(userAndWsClientDict)
     print(username + ' joined')
-    userAndWsClientDict.append({websocket:username})
+    userAndWsClientDict.append({websocket: username})
     await websocket.send(username)
-    
+
     # Notify other users that new user has joined
-    for client in connected: 
-                if client != websocket:
-                    await client.send(username+' joined')
+    for client in connected:
+        if client != websocket:
+            user_event_msg = {
+                "msg": username + ' joined',
+                "msg_type": msg_types.USER_EVENT,
+                "from": "SYSTEM"
+            }
+            await client.send(json.dumps(user_event_msg))
 
     try:
         async for message in websocket:
@@ -29,8 +33,13 @@ async def chat(websocket, path):
             # Broadcast message to all connected clients
             for client in connected:
                 if client != websocket:
-                    await client.send(username+'!'+message)
-                    
+                    chat_msg = {
+                        "msg": message,
+                        "msg_type": msg_types.CHAT,
+                        "from": username
+                    }
+                    await client.send(json.dumps(chat_msg))
+
     except websockets.exceptions.ConnectionClosedError as cce:
         print('Connection closed')
 
@@ -43,14 +52,20 @@ async def chat(websocket, path):
                     userAndWsClientDict.remove(userAndWsClient)
                     print(value + ' left')
                     # Notify other users that new user has joined
-                    for client in connected: 
+                    for client in connected:
                         if client != websocket:
-                            await client.send(username+' left')
+                            user_event_msg = {
+                                "msg": username + ' left',
+                                "msg_type": msg_types.USER_EVENT,
+                                "from": "SYSTEM"
+                            }
+                            await client.send(json.dumps(user_event_msg))
+
 
 async def main():
     async with websockets.serve(chat, "localhost", 8765):
         await asyncio.Future()  # run forever
 
+
 if __name__ == "__main__":
     asyncio.run(main())
-    

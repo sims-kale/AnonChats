@@ -29,13 +29,7 @@ client.on("connect", (connection) => {
   // Listen for messages from the server
   connection.on("message", (message) => {
     if (message && message.type === "utf8") {
-      if (message.utf8Data.includes("!")) {
-        let parts = message.utf8Data.split("!");
-        let fromUsername = parts[0];
-        let realMessage = parts.slice(1).join("!");
-      } else {
-        console.log("Response from server:", message.utf8Data);
-      }
+      console.log(message.utf8Data);
     }
   });
 

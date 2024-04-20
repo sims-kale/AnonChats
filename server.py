@@ -2,7 +2,7 @@ import asyncio
 import websockets
 import random
 import string
-from nameshelper import getUsername
+from util.nameshelper import getUsername
 
 # Store connected clients
 connected = set()

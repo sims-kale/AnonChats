@@ -2,6 +2,7 @@ import asyncio
 import websockets
 import json
 from util import msg_types, nameshelper
+from db.user_ips import add_record 
 
 # Store connected clients
 connected = set()
@@ -13,10 +14,12 @@ async def chat(websocket, path):
     # Register client
     connected.add(websocket)
     username = nameshelper.getUsername(userAndWsClientDict)
-    print(username + ' joined')
     userAndWsClientDict.append({websocket: username})
     await websocket.send(username)
-
+    remote_address = websocket.remote_address
+    print(f'{username} joined from {websocket.remote_address}')
+    ip_address = remote_address[0] if isinstance(remote_address, tuple) else remote_address  # Extract IP address if remote_address is a tuple
+    add_record(username, ip_address)
     # Notify other users that new user has joined
     for client in connected:
         if client != websocket:
@@ -41,7 +44,7 @@ async def chat(websocket, path):
                     await client.send(json.dumps(chat_msg))
 
     except websockets.exceptions.ConnectionClosedError as cce:
-        print('Connection closed')
+        print(f"{username}'s Connection closed")
 
     finally:
         # Remove client when they disconnect

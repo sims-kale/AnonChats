@@ -1,29 +1,54 @@
 import requests
 
-AIRTABLE_API_KEY = 'patP5LW5mVIcN5cij.8f1c28c482b9d10ee4cf33ed2d55bbc76f1ba782d9d7788978d2f754102c5633'
-AIRTABLE_BASE_ID = 'app3gsLNAt0Mo7Nkm'
-AIRTABLE_TABLE_NAME = 'User_IPs'
 
-def add_record(username, ip_address):
-    url = f'https://api.airtable.com/v0/{AIRTABLE_BASE_ID}/{AIRTABLE_TABLE_NAME}'
+import json
+
+with open("./config/dbconfig.json") as f:
+    config = json.load(f)
+
+write_token = config["write_token"]
+read_token = config["read_token"]
+AIRTABLE_BASE_ID = config["AIRTABLE_BASE_ID"]
+AIRTABLE_TABLE_NAME = config["AIRTABLE_TABLE_NAME"]
+
+
+def add_record(username, new_ip):
+    url = f"https://api.airtable.com/v0/{AIRTABLE_BASE_ID}/{AIRTABLE_TABLE_NAME}"
     headers = {
-        'Authorization': f'Bearer {AIRTABLE_API_KEY}',
-        'Content-Type': 'application/json'
+        "Authorization": f"Bearer {write_token}",
+        "Content-Type": "application/json",
     }
-    data = {
-        'fields': {
-            'Username': username,
-            'IP Address': ip_address
-        }
-    
-    }
-    # print("types : ", type(username), type(ip_address))
-    # print("feild: ", data)
-    
+    data = {"fields": {"Username": username, "IP Address": new_ip}}
+
     response = requests.post(url, headers=headers, json=data)
     if response.status_code == 200:
-        print(f"Record added to Airtable: {username} - {ip_address}")
+        print(f"Record added to Airtable: {username} - {new_ip}")
     else:
         print(f"Failed to add record to Airtable: {response.text}")
 
-# Add more functions as needed, like update_record, delete_record, etc.
+
+def matchUsername(ip_address):
+    url = f"https://api.airtable.com/v0/{AIRTABLE_BASE_ID}/{AIRTABLE_TABLE_NAME}"
+    headers = {
+        "Authorization": f"Bearer {read_token}",
+        "Content-Type": "application/json",
+    }
+    params = {"filterByFormula": f"{{IP Address}} = '{ip_address}'"}
+    res = requests.get(url, headers=headers, params=params)
+    try:
+        if res.status_code == 200:
+            data = res.json()
+            records = data.get("records", [])
+            if records:
+                fields = records[0].get(
+                    "fields", {}
+                )  # Return the fields of the first matching record
+                matched_username = fields.get("Username")
+                return matched_username
+            else:
+                return None
+    except:
+        print(f"Error in get records from airtable : {res.status_code}")
+
+
+# get_records(ip_address)

@@ -1,23 +1,26 @@
 import random
+from db.user_ips import matchUsername
 
-nicknames = [
-    "Sunny", "Lucky", "Shadow", "Phoenix", "Echo", "Raven", "Ghost", "Breeze", "Blaze", "Mystery",
-    "Ace", "Jazz", "Nova", "Dusk", "Vortex", "Sparrow", "Midnight", "Whisper", "Storm", "Falcon",
-    "Dragon", "Rocket", "Zenith", "Sapphire", "Stormy", "Viper", "Legend", "Mystic", "Blizzard", "Eclipse",
-    "Sky", "Hunter", "Aurora", "Infinity", "Puma", "Thunder", "Orion", "Spectre", "Goblin", "Spirit",
-    "Rogue", "Cosmo", "Crimson", "Comet", "Neon", "Phantom", "Volt", "Galaxy", "Pyro", "Pixel",
-    "Sage", "Shade", "Titan", "Velocity", "Vortex", "Zephyr", "Abyss", "Aether", "Avalanche", "Bolt",
-    "Chaos", "Flare", "Genesis", "Glacier", "Havoc", "Ignite", "Inferno", "Luna", "Magma", "Nebula",
-    "Omega", "Pulse", "Quasar", "Rogue", "Solstice", "Solar", "Talon", "Twilight", "Vertex", "Zen",
-    "Zodiac", "Amber", "Blitz", "Cascade", "Cobalt", "Enigma", "Frost", "Grim", "Harmony", "Haze",
-    "Mystique", "Nimbus", "Obsidian", "Pandora", "Radiance", "Seraph", "Tranquil", "Vortex", "Wraith", "Zenith"
-]
-
-def getUsername(userAndWsClientDict):
-    unnumber = random.randint(0,99)
-    nickname = nicknames[unnumber]
-    for userAndWsClient in userAndWsClientDict:
-        for key, value in userAndWsClient.items():
-            if value == nickname:
-                return getUsername(userAndWsClientDict)
+nicknames = ["Maverick","Spiderman","Jerry","GodFather","Jack Sparrow","Taklu Haiwan","Willy Wonka",
+    "Wakanda","Archi","Tylor","Sanjay Raut","Sawala Kumbhar(Swarg Return)","Lala","Maleficent","Evelyn Salt",
+    "Smith","Dighyaa","Erin Brockovich","Tessract","Tappu","Kombada", "Dagdu","Praju","Fandry","Danny Ocean",
+    "Kubdya Khavis","Kavtya Mahakale","Tatya Vinchu","Jack Dawson","Kirkire","Inamdar Bhusnale","Durga Mavshi",
+    "Lalu Prasad","Babu Kalia","Chota Bheem","Hatori","Chutaki","Nobita","Shijuka","Yeda Pakya", "Manya Surve",
+    "Chotta Chetan","Bapu ji","Silencer","Salmon Bhoi","Russi","Vik_as","Ghulya","Shinde","Dr. Salunke","Daya Bhabi",
+    "ACP Pradyuman","Basanti","Gabber","Baga","Bhide","Popatlal","Hercules","Mari","Mahesh Dalle","Binod","Lalit",
+    "Dhongi Baba","Vyakii","Kanohale che Papad","Paplet","Surmai","Monya","TyalaGad","HyalaGad","Vijay","Jay Veeru","Nattu Kaka",
+    "Chulbul Pandey","Bajirao Singham","Dhanjay Mane","Jai","Sundar","Veronica","Mastani","Jethalal","Piku","Alex","Jhilmil",
+    "Kashibai","Thala","Goli","Ronaldo", "Mighty Guy", "Naruto", "Kakashi Sensei", "Shinigami", "Reyuk", "Peppa Pig", "Poopy", 
+    "Hakamaru", "Scoop Ninja", "Hey You", "Who am I?", "LOLMaster", "DizzyDuck"]
+print(len(nicknames))
+def getUsername(userAndWsClientDict, websocket):
+    ip_address = websocket.remote_address[0]
+    nickname = matchUsername(ip_address)
+    if nickname is None:
+        unnumber = random.randint(0,100)
+        nickname = nicknames[unnumber]
+        for userAndWsClient in userAndWsClientDict:
+            for key, value in userAndWsClient.items():
+                if value == nickname:
+                    return getUsername(userAndWsClientDict)
     return nickname

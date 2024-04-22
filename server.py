@@ -2,7 +2,7 @@ import asyncio
 import websockets
 import json
 from util import msg_types, nameshelper
-from db.user_ips import add_record 
+
 
 # Store connected clients
 connected = set()
@@ -13,20 +13,19 @@ userAndWsClientDict = []
 async def chat(websocket, path):
     # Register client
     connected.add(websocket)
-    username = nameshelper.getUsername(userAndWsClientDict)
+
+    username = nameshelper.getUsername(userAndWsClientDict, websocket)
     userAndWsClientDict.append({websocket: username})
     await websocket.send(username)
-    remote_address = websocket.remote_address
-    print(f'{username} joined from {websocket.remote_address}')
-    ip_address = remote_address[0] if isinstance(remote_address, tuple) else remote_address  # Extract IP address if remote_address is a tuple
-    add_record(username, ip_address)
+    print(f"{username} joined")
+
     # Notify other users that new user has joined
     for client in connected:
         if client != websocket:
             user_event_msg = {
-                "msg": username + ' joined',
+                "msg": username + " joined",
                 "msg_type": msg_types.USER_EVENT,
-                "from": "SYSTEM"
+                "from": "SYSTEM",
             }
             await client.send(json.dumps(user_event_msg))
 
@@ -39,7 +38,7 @@ async def chat(websocket, path):
                     chat_msg = {
                         "msg": message,
                         "msg_type": msg_types.CHAT,
-                        "from": username
+                        "from": username,
                     }
                     await client.send(json.dumps(chat_msg))
 
@@ -53,14 +52,14 @@ async def chat(websocket, path):
             for key, value in userAndWsClient.items():
                 if key == websocket:
                     userAndWsClientDict.remove(userAndWsClient)
-                    print(value + ' left')
+                    print(value + " left")
                     # Notify other users that new user has joined
                     for client in connected:
                         if client != websocket:
                             user_event_msg = {
-                                "msg": username + ' left',
+                                "msg": username + " left",
                                 "msg_type": msg_types.USER_EVENT,
-                                "from": "SYSTEM"
+                                "from": "SYSTEM",
                             }
                             await client.send(json.dumps(user_event_msg))
 

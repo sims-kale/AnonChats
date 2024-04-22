@@ -9,7 +9,7 @@ nicknames = ["Maverick","Spiderman","Jerry","GodFather","Jack Sparrow","Taklu Ha
     "Chotta Chetan","Bapu ji","Silencer","Salmon Bhoi","Russi","Vik_as","Ghulya","Shinde","Dr. Salunke","Daya Bhabi",
     "ACP Pradyuman","Basanti","Gabber","Baga","Bhide","Popatlal","Hercules","Mari","Mahesh Dalle","Binod","Lalit",
     "Dhongi Baba","Vyakii","Kanohale che Papad","Paplet","Surmai","Monya","TyalaGad","HyalaGad","Vijay","Jay Veeru","Nattu Kaka",
-    "Chulbul Pandey","Bajirao Singham","Dhanjay Mane","Jai","Sundar","Veronica","Mastani","Jethalal","Piku","Alex","Jhilmil",
+    "Chulbul Pandey","Bajirao Singham","Dhanjay Mane","Katakirrr","Sundar","Veronica","Mastani","Jethalal","Piku","Alex","Jhilmil",
     "Kashibai","Thala","Goli","Ronaldo", "Mighty Guy", "Naruto", "Kakashi Sensei", "Shinigami", "Reyuk", "Peppa Pig", "Poopy", 
     "Hakamaru", "Scoop Ninja", "Hey You", "Who am I?", "LOLMaster", "DizzyDuck"]
 print(len(nicknames))

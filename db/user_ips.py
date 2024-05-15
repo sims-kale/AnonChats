@@ -3,7 +3,7 @@ import requests
 
 import json
 
-with open("./config/dbconfig.json") as f:
+with open("..\config\dbconfig.json") as f:
     config = json.load(f)
 
 write_token = config["write_token"]
@@ -51,4 +51,4 @@ def matchUsername(ip_address):
         print(f"Error in get records from airtable : {res.status_code}")
 
 
-# get_records(ip_address)
+# add_record(username="TEST", new_ip="0.0.0.0")

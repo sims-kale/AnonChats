@@ -3,7 +3,7 @@ import requests
 
 import json
 
-with open("..\config\dbconfig.json") as f:
+with open("../config/dbconfig.json") as f:
     config = json.load(f)
 
 # delete_token = config["delete_token"]

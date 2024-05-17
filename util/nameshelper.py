@@ -1,5 +1,5 @@
 import random
-from db.user_ips import matchUsername
+from db.user_ips import matchUsername, add_record, UserExists
 
 nicknames = ["Maverick","Spiderman","Jerry","GodFather","Jack Sparrow","Taklu Haiwan","Willy Wonka",
     "Wakanda","Archi","Tylor","Sanjay Raut","Sawala Kumbhar(Swarg Return)","Lala","Maleficent","Evelyn Salt",
@@ -12,15 +12,17 @@ nicknames = ["Maverick","Spiderman","Jerry","GodFather","Jack Sparrow","Taklu Ha
     "Chulbul Pandey","Bajirao Singham","Dhanjay Mane","Katakirrr","Sundar","Veronica","Mastani","Jethalal","Piku","Alex","Jhilmil",
     "Kashibai","Thala","Goli","Ronaldo", "Mighty Guy", "Naruto", "Kakashi Sensei", "Shinigami", "Reyuk", "Peppa Pig", "Poopy", 
     "Hakamaru", "Scoop Ninja", "Hey You", "Who am I?", "LOLMaster", "DizzyDuck"]
-print(len(nicknames))
-def getUsername(userAndWsClientDict, websocket):
+
+def getUsername(websocket):
     ip_address = websocket.remote_address[0]
+    print(websocket.remote_address)
     nickname = matchUsername(ip_address)
     if nickname is None:
         unnumber = random.randint(0,100)
         nickname = nicknames[unnumber]
-        for userAndWsClient in userAndWsClientDict:
-            for key, value in userAndWsClient.items():
-                if value == nickname:
-                    return getUsername(userAndWsClientDict)
+        if UserExists(nickname):
+            return getUsername(websocket)
+        
+        add_record(nickname, ip_address)        
+  
     return nickname

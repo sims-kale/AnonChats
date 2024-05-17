@@ -14,7 +14,7 @@ async def chat(websocket, path):
     # Register client
     connected.add(websocket)
 
-    username = nameshelper.getUsername(userAndWsClientDict, websocket)
+    username = nameshelper.getUsername(websocket)
     userAndWsClientDict.append({websocket: username})
     await websocket.send(username)
     print(f"{username} joined")

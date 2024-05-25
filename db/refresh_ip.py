@@ -1,9 +1,11 @@
 import requests
-
-
 import json
+import os
 
-with open("../config/dbconfig.json") as f:
+current_dir = os.path.dirname(os.path.realpath(__file__))
+relative_path = os.path.join(current_dir, "../config", "dbconfig.json")
+
+with open(relative_path) as f:
     config = json.load(f)
 
 # delete_token = config["delete_token"]
@@ -47,7 +49,7 @@ def refresh_airtable():
         print(
             f"Failed to delete query Airtable. Status code: {airtable_response.status_code} {airtable_response.text}")
 
-# refresh_airtable()
+refresh_airtable()
 
 
 #  Edit the Cron Jobs: Use the crontab -e command to edit the cron jobs.

@@ -1,9 +1,10 @@
 import requests
-
-
 import json
+import os
 
-with open("../config/dbconfig.json") as f:
+current_dir = os.path.dirname(os.path.realpath(__file__))
+relative_path = os.path.join(current_dir, "../config", "dbconfig.json")
+with open(relative_path) as f:
     config = json.load(f)
 
 write_token = config["write_token"]

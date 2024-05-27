@@ -17,7 +17,7 @@ async def chat(websocket, path):
     username = nameshelper.getUsername(websocket)
     userAndWsClientDict.append({websocket: username})
     await websocket.send(username)
-    print(f"{username} joined")
+    print(f"{username} joined", flush= True)
 
     # Notify other users that new user has joined
     for client in connected:
@@ -31,7 +31,6 @@ async def chat(websocket, path):
 
     try:
         async for message in websocket:
-            print(message)
             # Broadcast message to all connected clients
             for client in connected:
                 if client != websocket:
@@ -43,7 +42,7 @@ async def chat(websocket, path):
                     await client.send(json.dumps(chat_msg))
 
     except websockets.exceptions.ConnectionClosedError as cce:
-        print(f"{username}'s Connection closed")
+        print(f"{username}'s Connection closed", flush=True)
 
     finally:
         # Remove client when they disconnect
@@ -52,7 +51,7 @@ async def chat(websocket, path):
             for key, value in userAndWsClient.items():
                 if key == websocket:
                     userAndWsClientDict.remove(userAndWsClient)
-                    print(value + " left")
+                    print(value + " left", flush=True)
                     # Notify other users that new user has joined
                     for client in connected:
                         if client != websocket:
@@ -65,7 +64,7 @@ async def chat(websocket, path):
 
 
 async def main():
-    async with websockets.serve(chat, "localhost", 8765):
+    async with websockets.serve(chat, "0.0.0.0", 8765):
         await asyncio.Future()  # run forever
 
 

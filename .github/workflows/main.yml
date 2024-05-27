@@ -31,4 +31,5 @@ jobs:
           git status
           bash /home/ubuntu/kill_server.sh
           nohup python3 server.py > output.log 2>&1 &
+          pgrep -f -x "python3 server.py"
         

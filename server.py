@@ -64,7 +64,10 @@ async def chat(websocket, path):
                                 "msg_type": msg_types.USER_EVENT,
                                 "from": "SYSTEM",
                             }
-                            await client.send(json.dumps(user_event_msg))
+                            try:
+                                await client.send(json.dumps(user_event_msg))
+                            except Exception as e:
+                                print(f"Connection Closed for {username}\n\n {str(e)}")
 
 
 async def main():

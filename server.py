@@ -20,14 +20,18 @@ async def chat(websocket, path):
     print(f"{username} joined", flush= True)
 
     # Notify other users that new user has joined
-    for client in connected:
-        if client != websocket:
-            user_event_msg = {
-                "msg": username + " joined",
-                "msg_type": msg_types.USER_EVENT,
-                "from": "SYSTEM",
-            }
-            await client.send(json.dumps(user_event_msg))
+    try:
+        for client in connected:
+            if client != websocket:
+                user_event_msg = {
+                    "msg": username + " joined",
+                    "msg_type": msg_types.USER_EVENT,
+                    "from": "SYSTEM",
+                }
+                await client.send(json.dumps(user_event_msg))
+    except Exception as e:
+        print(f"Connection Closed for {username}\n\n {str(e)}")
+    
 
     try:
         async for message in websocket:

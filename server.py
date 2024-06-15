@@ -1,8 +1,9 @@
 import asyncio
 import websockets
 import json
-from util import msg_types, nameshelper
 
+from db.airtable_helper import getProfileUrl
+from util import msg_types, nameshelper
 
 # Store connected clients
 connected = set()
@@ -15,9 +16,22 @@ async def chat(websocket, path):
     connected.add(websocket)
 
     username = nameshelper.getUsername(websocket)
+
+    # Get profile image by username if no image found get the default image as profile image
+    profile_image_url = getProfileUrl(username)
+    profile_image_url = getProfileUrl("DEFAULT") if (profile_image_url is None) else profile_image_url
+
     userAndWsClientDict.append({websocket: username})
-    await websocket.send(username)
-    print(f"{username} joined", flush= True)
+    user_details_msg = {
+        "msg": {
+            username: username,
+            profile_image_url: profile_image_url
+        },
+        "msg_type": msg_types.USER_DETAILS,
+        "from": "SYSTEM",
+    }
+    await websocket.send(user_details_msg)
+    print(f"{username} joined", flush=True)
 
     # Notify other users that new user has joined
     try:
@@ -31,7 +45,6 @@ async def chat(websocket, path):
                 await client.send(json.dumps(user_event_msg))
     except Exception as e:
         print(f"Connection Closed for {username}\n\n {str(e)}")
-    
 
     try:
         async for message in websocket:

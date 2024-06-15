@@ -65,9 +65,6 @@ def getProfileUrl(username):
         if res.status_code == 200:
             data = res.json()
             records = data.get("records", [])
-            fields = records[0].get(
-                "fields", {}
-            )
             if records:
                 fields = records[0].get(
                     "fields", {}

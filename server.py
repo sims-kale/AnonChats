@@ -24,13 +24,13 @@ async def chat(websocket, path):
     userAndWsClientDict.append({websocket: username})
     user_details_msg = {
         "msg": {
-            username: username,
-            profile_image_url: profile_image_url
+            "username": username,
+            "profile_image_url": profile_image_url
         },
         "msg_type": msg_types.USER_DETAILS,
         "from": "SYSTEM",
     }
-    await websocket.send(user_details_msg)
+    await websocket.send(json.dumps(user_details_msg))
     print(f"{username} joined", flush=True)
 
     # Notify other users that new user has joined
